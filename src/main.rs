@@ -1,3 +1,4 @@
+use std::io::Write;
 use tree_sitter::{Language, Parser, Query, QueryCursor};
 
 extern "C" {
@@ -15,6 +16,9 @@ fn main() {
     // TODO: Query for typealiases too
     let query = Query::new(language, "(class_declaration) @class").unwrap();
 
+    let stdout = std::io::stdout();
+    let mut lock = stdout.lock();
+
     // TODO: Parallelize
     for arg in std::env::args_os().skip(1) {
         let mut cursor = QueryCursor::new();
@@ -28,13 +32,15 @@ fn main() {
             let node = m.captures.first().unwrap().node;
             let id_node = node.child_by_field_name("identifier").unwrap();
 
-            // TODO: lock stdout manually
-            println!(
+            // TODO: ignore broken pipe errors
+            writeln!(
+                lock,
                 "{}:{} {}",
                 arg.to_string_lossy(),
                 id_node.start_position().row,
                 &source[id_node.byte_range()]
-            );
+            )
+            .unwrap();
         }
     }
 }
