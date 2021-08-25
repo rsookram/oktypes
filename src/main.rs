@@ -1,3 +1,4 @@
+use rayon::prelude::*;
 use std::io::Write;
 use tree_sitter::{Language, Parser, Query, QueryCursor};
 
@@ -9,24 +10,26 @@ fn main() {
     // TODO: Add safety comment
     let language = unsafe { tree_sitter_kotlin() };
 
-    let mut parser = Parser::new();
-    // TODO: Handle errors
-    parser.set_language(language).unwrap();
-
     // TODO: Query for typealiases too
+    // TODO: Handle errors
     let query = Query::new(language, "(class_declaration) @class").unwrap();
 
     let stdout = std::io::stdout();
-    let mut lock = stdout.lock();
 
-    // TODO: Parallelize
-    for arg in std::env::args_os().skip(1) {
+    let args = std::env::args_os().skip(1).collect::<Vec<_>>();
+
+    args.par_iter().for_each(|arg| {
+        let mut parser = Parser::new();
+        parser.set_language(language).unwrap();
+
         let mut cursor = QueryCursor::new();
 
         let source = std::fs::read_to_string(&arg).unwrap();
         let tree = parser.parse(&source, None).unwrap();
 
         let matches = cursor.captures(&query, tree.root_node(), |_| "");
+
+        let mut lock = stdout.lock();
 
         for (m, _) in matches {
             let node = m.captures.first().unwrap().node;
@@ -42,5 +45,5 @@ fn main() {
             )
             .unwrap();
         }
-    }
+    });
 }
