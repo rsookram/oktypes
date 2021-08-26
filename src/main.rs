@@ -11,39 +11,48 @@ fn main() {
     let language = unsafe { tree_sitter_kotlin() };
 
     // TODO: Query for typealiases too
-    // TODO: Handle errors
-    let query = Query::new(language, "(class_declaration) @class").unwrap();
+    let query = Query::new(language, "(class_declaration) @class").expect("query is invalid");
 
     let stdout = std::io::stdout();
 
     let args = std::env::args_os().skip(1).collect::<Vec<_>>();
 
-    args.par_iter().for_each(|arg| {
+    let result = args.par_iter().try_for_each(|arg| {
         let mut parser = Parser::new();
-        parser.set_language(language).unwrap();
+        parser
+            .set_language(language)
+            .expect("language is generated with an incompatible version of tree-sitter");
 
         let mut cursor = QueryCursor::new();
 
-        let source = std::fs::read_to_string(&arg).unwrap();
-        let tree = parser.parse(&source, None).unwrap();
+        let source = std::fs::read_to_string(&arg)?;
+        let tree = parser
+            .parse(&source, None)
+            .expect("pre-conditions aren't satisfied");
 
         let matches = cursor.captures(&query, tree.root_node(), |_| "");
 
         let mut lock = stdout.lock();
 
-        for (m, _) in matches {
-            let node = m.captures.first().unwrap().node;
-            let id_node = node.child_by_field_name("identifier").unwrap();
+        let result = matches
+            .map(|(m, _)| m)
+            .flat_map(|m| m.captures)
+            .filter_map(|c| c.node.child_by_field_name("identifier"))
+            .try_for_each(|id_node| {
+                writeln!(
+                    lock,
+                    "{}:{} {}",
+                    arg.to_string_lossy(),
+                    id_node.start_position().row,
+                    &source[id_node.byte_range()]
+                )
+            });
 
-            // TODO: ignore broken pipe errors
-            writeln!(
-                lock,
-                "{}:{} {}",
-                arg.to_string_lossy(),
-                id_node.start_position().row,
-                &source[id_node.byte_range()]
-            )
-            .unwrap();
-        }
+        result
     });
+
+    // TODO: Handle errors
+    if let Err(_) = result {
+        // TODO: ignore broken pipe errors
+    }
 }
