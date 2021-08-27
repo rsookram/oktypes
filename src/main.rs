@@ -51,11 +51,13 @@ fn main() {
         result
     });
 
-    // TODO: Handle errors
     if let Err(err) = result {
         if err.kind() == io::ErrorKind::BrokenPipe {
             // Ignore broken pipe errors to better handle usage within a pipeline (e.g.
             // `oktypes ...  | head -n1`)
+        } else {
+            eprintln!("{}: {}", "TODO: include filename in error", err);
+            std::process::exit(err.raw_os_error().unwrap_or(1));
         }
     }
 }
