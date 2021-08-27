@@ -1,5 +1,5 @@
 use rayon::prelude::*;
-use std::io::Write;
+use std::io::{self, Write};
 use tree_sitter::{Language, Parser, Query, QueryCursor};
 
 extern "C" {
@@ -13,7 +13,7 @@ fn main() {
     // TODO: Query for typealiases too
     let query = Query::new(language, "(class_declaration) @class").expect("query is invalid");
 
-    let stdout = std::io::stdout();
+    let stdout = io::stdout();
 
     let args = std::env::args_os().skip(1).collect::<Vec<_>>();
 
@@ -52,7 +52,10 @@ fn main() {
     });
 
     // TODO: Handle errors
-    if let Err(_) = result {
-        // TODO: ignore broken pipe errors
+    if let Err(err) = result {
+        if err.kind() == io::ErrorKind::BrokenPipe {
+            // Ignore broken pipe errors to better handle usage within a pipeline (e.g.
+            // `oktypes ...  | head -n1`)
+        }
     }
 }
