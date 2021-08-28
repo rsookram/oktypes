@@ -5,7 +5,8 @@ fn main() -> Result<(), cc::Error> {
         .file("tree-sitter-kotlin/src/parser.c")
         .try_compile("kotlin")?;
 
-    // TODO: emit rerun-if-changed
+    // Only rebuild if the code generated for the grammar changed
+    println!("cargo:rerun-if-changed=tree-sitter-kotlin/src");
 
     Ok(())
 }
