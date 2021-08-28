@@ -10,8 +10,11 @@ fn main() {
     // TODO: Add safety comment
     let language = unsafe { tree_sitter_kotlin() };
 
-    let query =
-        Query::new(language, "[(class_declaration) (type_alias)] @type").expect("query is invalid");
+    let query = Query::new(
+        language,
+        "[(class_declaration) (type_alias) (object_declaration)] @type",
+    )
+    .expect("query is invalid");
 
     let stdout = io::stdout();
 
@@ -44,7 +47,15 @@ fn main() {
         let result = matches
             .map(|(m, _)| m)
             .flat_map(|m| m.captures)
-            .filter_map(|c| c.node.child_by_field_name("identifier"))
+            .filter_map(|c| {
+                // TODO: Consider forking tree-sitter-kotlin to make object_declaration consistent
+                // with classes and type aliases
+                if c.node.kind() == "object_declaration" {
+                    c.node.child(1)
+                } else {
+                    c.node.child_by_field_name("identifier")
+                }
+            })
             .try_for_each(|id_node| {
                 writeln!(
                     lock,
