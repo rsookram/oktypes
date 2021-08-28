@@ -10,8 +10,8 @@ fn main() {
     // TODO: Add safety comment
     let language = unsafe { tree_sitter_kotlin() };
 
-    // TODO: Query for typealiases too
-    let query = Query::new(language, "(class_declaration) @class").expect("query is invalid");
+    let query =
+        Query::new(language, "[(class_declaration) (type_alias)] @type").expect("query is invalid");
 
     let stdout = io::stdout();
 
