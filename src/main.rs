@@ -25,7 +25,14 @@ fn main() {
 
         let mut cursor = QueryCursor::new();
 
-        let source = std::fs::read_to_string(&arg)?;
+        let source = match std::fs::read_to_string(&arg) {
+            Ok(s) => s,
+            Err(err) => {
+                eprintln!("{}: {}", arg.to_string_lossy(), err);
+                return Err(err);
+            }
+        };
+
         let tree = parser
             .parse(&source, None)
             .expect("pre-conditions aren't satisfied");
@@ -56,7 +63,6 @@ fn main() {
             // Ignore broken pipe errors to better handle usage within a pipeline (e.g.
             // `oktypes ...  | head -n1`)
         } else {
-            eprintln!("{}: {}", "TODO: include filename in error", err);
             std::process::exit(err.raw_os_error().unwrap_or(1));
         }
     }
