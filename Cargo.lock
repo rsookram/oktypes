@@ -129,9 +129,9 @@ dependencies = [
 name = "oktypes"
 version = "0.1.0"
 dependencies = [
- "cc",
  "rayon",
  "tree-sitter",
+ "tree-sitter-kotlin",
 ]
 
 [[package]]
@@ -190,4 +190,12 @@ checksum = "ad726ec26496bf4c083fff0f43d4eb3a2ad1bba305323af5ff91383c0b6ecac0"
 dependencies = [
  "cc",
  "regex",
+]
+
+[[package]]
+name = "tree-sitter-kotlin"
+version = "0.0.1"
+dependencies = [
+ "cc",
+ "tree-sitter",
 ]

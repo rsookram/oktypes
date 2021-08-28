@@ -1,14 +1,10 @@
 use rayon::prelude::*;
 use std::io::{self, Write};
-use tree_sitter::{Language, Parser, Query, QueryCursor};
-
-extern "C" {
-    fn tree_sitter_kotlin() -> Language;
-}
+use tree_sitter::{Parser, Query, QueryCursor};
+use tree_sitter_kotlin::language;
 
 fn main() {
-    // TODO: Add safety comment
-    let language = unsafe { tree_sitter_kotlin() };
+    let language = language();
 
     let query = Query::new(
         language,
