@@ -1,3 +1,0 @@
-[submodule "tree-sitter-kotlin"]
-	path = tree-sitter-kotlin
-	url = https://github.com/rsookram/tree-sitter-kotlin

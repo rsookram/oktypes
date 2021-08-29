@@ -195,6 +195,7 @@ dependencies = [
 [[package]]
 name = "tree-sitter-kotlin"
 version = "0.0.1"
+source = "git+https://github.com/rsookram/tree-sitter-kotlin?rev=72fdb14af0c2d63dca842026d76799d7015aeb71#72fdb14af0c2d63dca842026d76799d7015aeb71"
 dependencies = [
  "cc",
  "tree-sitter",
