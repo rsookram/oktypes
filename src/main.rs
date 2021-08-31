@@ -1,9 +1,27 @@
 use rayon::prelude::*;
-use std::io::{self, Write};
+use std::{
+    ffi::OsString,
+    io::{self, Write},
+};
 use tree_sitter::{Parser, Query, QueryCursor};
 use tree_sitter_kotlin::language;
 
 fn main() {
+    let args = std::env::args_os().skip(1).collect::<Vec<_>>();
+
+    let result = run(&args);
+
+    if let Err(err) = result {
+        if err.kind() == io::ErrorKind::BrokenPipe {
+            // Ignore broken pipe errors to better handle usage within a pipeline (e.g.
+            // `oktypes ...  | head -n1`)
+        } else {
+            std::process::exit(err.raw_os_error().unwrap_or(1));
+        }
+    }
+}
+
+fn run(args: &[OsString]) -> Result<(), io::Error> {
     let language = language();
 
     let query = Query::new(
@@ -14,9 +32,7 @@ fn main() {
 
     let stdout = io::stdout();
 
-    let args = std::env::args_os().skip(1).collect::<Vec<_>>();
-
-    let result = args.par_iter().try_for_each(|arg| {
+    args.par_iter().try_for_each(|arg| {
         let mut parser = Parser::new();
         parser
             .set_language(language)
@@ -55,14 +71,5 @@ fn main() {
             });
 
         result
-    });
-
-    if let Err(err) = result {
-        if err.kind() == io::ErrorKind::BrokenPipe {
-            // Ignore broken pipe errors to better handle usage within a pipeline (e.g.
-            // `oktypes ...  | head -n1`)
-        } else {
-            std::process::exit(err.raw_os_error().unwrap_or(1));
-        }
-    }
+    })
 }
