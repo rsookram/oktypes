@@ -5,7 +5,7 @@ edition = "2018"
 
 [dependencies]
 tree-sitter = "0.20.0"
-tree-sitter-kotlin = { git = "https://github.com/rsookram/tree-sitter-kotlin", rev = "72fdb14af0c2d63dca842026d76799d7015aeb71" }
+tree-sitter-kotlin = { git = "https://github.com/rsookram/tree-sitter-kotlin", rev = "e7bfe9055987bcc249bf3743879ea9c7b22390a6" }
 rayon = "1.5.1"
 
 [profile.release]
