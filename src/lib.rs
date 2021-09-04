@@ -43,8 +43,7 @@ impl TypeParser {
         let matches = cursor.captures(&self.query, tree.root_node(), |_| "");
 
         let types = matches
-            .map(|(m, _)| m)
-            .flat_map(|m| m.captures)
+            .flat_map(|(m, _)| m.captures)
             .filter_map(|c| c.node.child_by_field_name("identifier"))
             .map(|id_node| Type {
                 name: source[id_node.byte_range()].to_string(),
