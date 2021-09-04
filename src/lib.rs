@@ -40,7 +40,7 @@ impl TypeParser {
             .parse(&source, None)
             .expect("pre-conditions aren't satisfied");
 
-        let matches = cursor.captures(&self.query, tree.root_node(), |_| "");
+        let matches = cursor.captures(&self.query, tree.root_node(), source.as_bytes());
 
         let types = matches
             .flat_map(|(m, _)| m.captures)

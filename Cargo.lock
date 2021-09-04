@@ -184,9 +184,9 @@ checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
 name = "tree-sitter"
-version = "0.19.5"
+version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad726ec26496bf4c083fff0f43d4eb3a2ad1bba305323af5ff91383c0b6ecac0"
+checksum = "63ec02a07a782abef91279b72fe8fd2bee4c168a22112cedec5d3b0d49b9e4f9"
 dependencies = [
  "cc",
  "regex",
@@ -195,7 +195,7 @@ dependencies = [
 [[package]]
 name = "tree-sitter-kotlin"
 version = "0.0.1"
-source = "git+https://github.com/rsookram/tree-sitter-kotlin?rev=72fdb14af0c2d63dca842026d76799d7015aeb71#72fdb14af0c2d63dca842026d76799d7015aeb71"
+source = "git+https://github.com/rsookram/tree-sitter-kotlin?rev=e7bfe9055987bcc249bf3743879ea9c7b22390a6#e7bfe9055987bcc249bf3743879ea9c7b22390a6"
 dependencies = [
  "cc",
  "tree-sitter",
