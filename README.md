@@ -32,7 +32,7 @@ oktypes can be built from source by cloning this repository and using Cargo.
 
 ```
 git clone https://github.com/rsookram/oktypes
-cd calr
+cd oktypes
 cargo build --release
 ```
 
